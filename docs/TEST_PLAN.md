@@ -1,12 +1,4 @@
-# KẾ HOẠCH KIỂM THỬ (TEST PLAN)
 
-- **Dự án:** Website bán hàng trực tuyến
-- **Sinh viên:** Phạm Thanh Tùng - TS03269
-- **Lớp:** SD21307
-- **Môn học:** SOF309 - Kiểm thử nâng cao cùng AI
-- **Giảng viên hướng dẫn:** ThS. Trần Quang Bình
-
----
 
 ## 1. MỤC TIÊU KIỂM THỬ
 
