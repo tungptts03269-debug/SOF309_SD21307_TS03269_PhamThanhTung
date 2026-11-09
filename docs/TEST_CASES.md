@@ -1,74 +1,61 @@
-
----
-
-## 1. Chức năng Đăng nhập (LOGIN)
-
-| ID | Tên test case | Loại | Ưu tiên | Nhóm | Điều kiện tiên quyết | Các bước thực hiện | Dữ liệu test | Kết quả mong đợi |
-|---|---|:---:|:---:|:---:|---|---|---|---|
-| TC_LOGIN_01 | Đăng nhập thành công | UI | H | smoke | Tài khoản `admin` đã tồn tại | 1. Mở trang đăng nhập<br>2. Nhập username, password<br>3. Bấm Đăng nhập | admin / 123456 | Chuyển tới trang chủ, hiển thị tên người dùng |
-| TC_LOGIN_02 | Sai mật khẩu | UI | H | smoke | Tài khoản `admin` đã tồn tại | 1. Mở trang đăng nhập<br>2. Nhập đúng username, sai password<br>3. Bấm Đăng nhập | admin / sai_mk | Ở lại trang đăng nhập, hiện thông báo "Sai tên đăng nhập hoặc mật khẩu" |
-| TC_LOGIN_03 | Tài khoản không tồn tại | UI | H | | Không | 1. Nhập username chưa đăng ký<br>2. Bấm Đăng nhập | khongtontai / 123456 | Hiện thông báo lỗi đăng nhập |
-| TC_LOGIN_04 | Để trống username | UI | H | | Không | 1. Bỏ trống username, nhập password<br>2. Bấm Đăng nhập | "" / 123456 | Hiện thông báo "Vui lòng nhập tên đăng nhập" |
-| TC_LOGIN_05 | Để trống password | UI | H | | Không | 1. Nhập username, bỏ trống password<br>2. Bấm Đăng nhập | admin / "" | Hiện thông báo "Vui lòng nhập mật khẩu" |
-| TC_LOGIN_06 | Để trống cả hai trường | UI | M | | Không | 1. Bấm Đăng nhập khi chưa nhập gì | "" / "" | Hiện thông báo yêu cầu nhập đủ thông tin |
-| TC_LOGIN_07 | Username có khoảng trắng đầu/cuối | UI | M | | Tài khoản `admin` tồn tại | 1. Nhập ` admin ` và password đúng<br>2. Bấm Đăng nhập | " admin " / 123456 | Hệ thống tự cắt khoảng trắng và đăng nhập thành công, hoặc báo lỗi rõ ràng |
-| TC_LOGIN_08 | Chống SQL Injection | UI | H | | Không | 1. Nhập chuỗi injection vào username<br>2. Bấm Đăng nhập | `' OR '1'='1` / bất kỳ | Đăng nhập thất bại, không lộ lỗi hệ thống |
-| TC_LOGIN_09 | Mật khẩu được ẩn | UI | L | | Không | 1. Nhập password vào ô mật khẩu | 123456 | Ký tự hiển thị dạng dấu chấm (type=password) |
-| TC_LOGIN_10 | Kiểm tra nhiều tài khoản (Data-Driven) | UI | M | | Có danh sách tài khoản | 1. Dùng `@DataProvider` lặp qua từng cặp tài khoản<br>2. Đăng nhập | Bảng dữ liệu hợp lệ / không hợp lệ | Hợp lệ vào được hệ thống, không hợp lệ bị từ chối |
-
----
-
-## 2. Chức năng Đăng ký (REGISTER)
-
-| ID | Tên test case | Loại | Ưu tiên | Nhóm | Điều kiện tiên quyết | Các bước thực hiện | Dữ liệu test | Kết quả mong đợi |
-|---|---|:---:|:---:|:---:|---|---|---|---|
-| TC_REG_01 | Đăng ký thành công | UI | H | smoke | Username chưa tồn tại | 1. Mở trang đăng ký<br>2. Nhập đầy đủ thông tin hợp lệ<br>3. Bấm Đăng ký | user01 / 123456 / user01@gmail.com | Hiện thông báo thành công, chuyển về trang đăng nhập |
-| TC_REG_02 | Username đã tồn tại | UI | H | | Tài khoản `admin` đã có | 1. Đăng ký bằng username đã có | admin / 123456 / a@gmail.com | Hiện thông báo "Tên đăng nhập đã tồn tại" |
-| TC_REG_03 | Email sai định dạng | UT + UI | H | | Không | 1. Nhập email thiếu `@` hoặc thiếu tên miền | abc, abc@, @gmail.com | Hiện thông báo "Email không hợp lệ" |
-| TC_REG_04 | Mật khẩu quá ngắn (biên dưới) | UT | H | | Không | 1. Nhập mật khẩu ngắn hơn quy định (giả sử tối thiểu 6 ký tự) | "12345" | Từ chối, báo lỗi độ dài mật khẩu |
-| TC_REG_05 | Mật khẩu đúng biên tối thiểu | UT | M | | Không | 1. Nhập mật khẩu đúng 6 ký tự | "123456" | Chấp nhận |
-| TC_REG_06 | Mật khẩu quá dài (biên trên) | UT | M | | Không | 1. Nhập mật khẩu dài hơn giới hạn (giả sử tối đa 32 ký tự) | 33 ký tự | Từ chối, báo lỗi độ dài mật khẩu |
-| TC_REG_07 | Xác nhận mật khẩu không khớp | UI | H | | Không | 1. Nhập password và confirm khác nhau | 123456 / 654321 | Hiện thông báo "Mật khẩu xác nhận không khớp" |
-| TC_REG_08 | Để trống các trường bắt buộc | UI | H | | Không | 1. Bấm Đăng ký khi chưa nhập gì | Tất cả để trống | Hiện thông báo lỗi ở từng trường bắt buộc |
-| TC_REG_09 | Username chứa ký tự đặc biệt | UT | M | | Không | 1. Nhập username có ký tự không cho phép | user@#$ | Từ chối, báo lỗi định dạng |
-| TC_REG_10 | Ném ngoại lệ khi dữ liệu null | UT | M | | Không | 1. Gọi hàm đăng ký với đối số null | null | `assertThrows` bắt được ngoại lệ nghiệp vụ (ví dụ `IllegalArgumentException`) |
-
----
-
-## 3. Chức năng Quản lý – CRUD
-
-> Thay "đối tượng" bằng thực thể trong web của bạn (sản phẩm, sinh viên, sách...).
-
-| ID | Tên test case | Loại | Ưu tiên | Nhóm | Điều kiện tiên quyết | Các bước thực hiện | Dữ liệu test | Kết quả mong đợi |
-|---|---|:---:|:---:|:---:|---|---|---|---|
-| TC_CRUD_01 | Hiển thị danh sách | UI | H | smoke | Đã đăng nhập, có dữ liệu | 1. Mở trang danh sách | Không | Bảng hiển thị đúng các bản ghi hiện có |
-| TC_CRUD_02 | Thêm mới thành công | UI | H | smoke | Đã đăng nhập | 1. Bấm Thêm mới<br>2. Nhập thông tin hợp lệ<br>3. Bấm Lưu | Dữ liệu hợp lệ | Bản ghi mới xuất hiện trong danh sách, có thông báo thành công |
-| TC_CRUD_03 | Thêm mới thiếu trường bắt buộc | UI | H | | Đã đăng nhập | 1. Bấm Lưu khi bỏ trống trường bắt buộc | Trường bắt buộc để trống | Hiện thông báo lỗi, không tạo bản ghi |
-| TC_CRUD_04 | Thêm mới trùng dữ liệu | UT + UI | M | | Đã có bản ghi cùng mã | 1. Thêm bản ghi trùng mã | Mã đã tồn tại | Từ chối, báo "Dữ liệu đã tồn tại" |
-| TC_CRUD_05 | Kiểm tra giá trị biên của số | UT | H | | Không | 1. Nhập giá trị: -1, 0, 1, giá trị lớn nhất cho phép, lớn nhất + 1 | -1, 0, 1, max, max+1 | Giá trị âm và vượt max bị từ chối; 0 (nếu hợp lệ) và 1, max được chấp nhận |
-| TC_CRUD_06 | Cập nhật thành công | UI | H | | Có bản ghi để sửa | 1. Bấm Sửa ở một bản ghi<br>2. Đổi thông tin<br>3. Bấm Lưu | Dữ liệu mới hợp lệ | Thông tin được cập nhật đúng trong danh sách |
-| TC_CRUD_07 | Cập nhật bản ghi không tồn tại | UT | M | | Không | 1. Gọi cập nhật với ID không có | ID = 999999 | `assertThrows` bắt được ngoại lệ "không tìm thấy" |
-| TC_CRUD_08 | Xóa thành công | UI | H | | Có bản ghi để xóa | 1. Bấm Xóa<br>2. Xác nhận | Một bản ghi bất kỳ | Bản ghi biến mất khỏi danh sách |
-| TC_CRUD_09 | Hủy thao tác xóa | UI | L | | Có bản ghi | 1. Bấm Xóa<br>2. Chọn Hủy ở hộp xác nhận | Một bản ghi bất kỳ | Bản ghi vẫn còn nguyên |
-| TC_CRUD_10 | Tìm kiếm theo từ khóa | UI | M | | Có nhiều bản ghi | 1. Nhập từ khóa vào ô tìm kiếm<br>2. Bấm Tìm | Từ khóa có trong dữ liệu | Chỉ hiển thị các bản ghi khớp từ khóa |
-| TC_CRUD_11 | Tìm kiếm không có kết quả | UI | L | | Có dữ liệu | 1. Nhập từ khóa không tồn tại | "zzzzzz" | Hiện thông báo "Không có dữ liệu" |
-| TC_CRUD_12 | Truy cập khi chưa đăng nhập | UI | H | | Chưa đăng nhập | 1. Mở trực tiếp URL trang quản lý | URL trang quản lý | Bị chuyển về trang đăng nhập |
-
----
-
-## 4. Tổng hợp
-
-| Chức năng | Số test case | Ưu tiên cao (H) | Nhóm smoke |
-|---|:---:|:---:|:---:|
-| Đăng nhập | 10 | 6 | 2 |
-| Đăng ký | 10 | 6 | 1 |
-| CRUD | 12 | 8 | 3 |
-| **Tổng** | **32** | **20** | **6** |
-
-## 5. Bảng ghi nhận kết quả chạy
-
-| ID | Kết quả thực tế | Trạng thái (Pass/Fail) | Ngày chạy | Ghi chú / Link ảnh lỗi |
-|---|---|:---:|---|---|
-| TC_LOGIN_01 | | | | |
-| TC_LOGIN_02 | | | | |
-| ... | | | | |
+1. Đăng ký (REGISTER)
+ID	Tên test case	Loại	Ưu tiên	Các bước	Dữ liệu test	Kết quả mong đợi	Kết quả thực tế	Trạng thái
+TC_REG_01	Đăng ký thành công	UI	H	1. Mở trang đăng ký
+2. Nhập thông tin hợp lệ
+3. Bấm Đăng ký	user01 / user01@gmail.com / Abc@1234 / Abc@1234	Đăng ký thành công, có thông báo		
+TC_REG_02	Username đúng biên dưới (5 ký tự)	UT	M	Gọi validate username	abcde	Hợp lệ		
+TC_REG_03	Username dưới biên (4 ký tự)	UT	H	Gọi validate username	abcd	Bị từ chối, báo lỗi độ dài		
+TC_REG_04	Username đúng biên trên (20 ký tự)	UT	M	Gọi validate username	20 ký tự bất kỳ	Hợp lệ		
+TC_REG_05	Username vượt biên (21 ký tự)	UT	H	Gọi validate username	21 ký tự bất kỳ	Bị từ chối, báo lỗi độ dài		
+TC_REG_06	Username đã tồn tại	UI	H	Đăng ký bằng username đã có	admin / a@gmail.com / Abc@1234 / Abc@1234	Báo "Tên đăng nhập đã tồn tại"		
+TC_REG_07	Username để trống	UI	H	Bỏ trống username, bấm Đăng ký	""	Báo lỗi bắt buộc nhập		
+TC_REG_08	Email sai định dạng	UT	H	Gọi validate email	abc, abc@, @gmail.com	Bị từ chối, báo "Email không hợp lệ"		
+TC_REG_09	Email để trống	UI	M	Bỏ trống email, bấm Đăng ký	""	Báo lỗi bắt buộc nhập		
+TC_REG_10	Mật khẩu đúng biên (8 ký tự, có ký tự đặc biệt)	UT	M	Gọi validate password	Abcdef@1	Hợp lệ		
+TC_REG_11	Mật khẩu dưới biên (7 ký tự)	UT	H	Gọi validate password	Abcde@1	Bị từ chối, báo lỗi độ dài		
+TC_REG_12	Mật khẩu đủ dài nhưng thiếu ký tự đặc biệt	UT	H	Gọi validate password	Abcdefg12	Bị từ chối, yêu cầu ký tự đặc biệt		
+TC_REG_13	Mật khẩu để trống	UI	H	Bỏ trống password, bấm Đăng ký	""	Báo lỗi bắt buộc nhập		
+TC_REG_14	Xác nhận mật khẩu không khớp	UI	H	Nhập password và confirmPassword khác nhau	Abc@1234 / Abc@12345	Báo "Mật khẩu xác nhận không khớp"		
+TC_REG_15	Để trống toàn bộ form	UI	M	Bấm Đăng ký khi chưa nhập gì	Tất cả trống	Báo lỗi ở từng trường bắt buộc		
+TC_REG_16	Dữ liệu null	UT	M	Gọi hàm đăng ký với đối số null	null	assertThrows bắt được ngoại lệ nghiệp vụ		
+2. Đăng nhập (LOGIN)
+ID	Tên test case	Loại	Ưu tiên	Các bước	Dữ liệu test	Kết quả mong đợi	Kết quả thực tế	Trạng thái
+TC_LOGIN_01	Đăng nhập thành công	UI	H	1. Mở trang đăng nhập
+2. Nhập đúng tài khoản
+3. Bấm Đăng nhập	tài khoản hợp lệ	Chuyển về trang chủ		
+TC_LOGIN_02	Sai mật khẩu	UI	H	Nhập đúng username, sai password	user01 / saimatkhau	Ở lại trang đăng nhập, báo lỗi		
+TC_LOGIN_03	Tài khoản không tồn tại	UI	H	Nhập username chưa đăng ký	khongco123 / Abc@1234	Báo lỗi đăng nhập		
+TC_LOGIN_04	Để trống username	UI	H	Bỏ trống username	"" / Abc@1234	Báo lỗi bắt buộc nhập		
+TC_LOGIN_05	Để trống password	UI	H	Bỏ trống password	user01 / ""	Báo lỗi bắt buộc nhập		
+TC_LOGIN_06	Để trống cả hai trường	UI	M	Bấm Đăng nhập khi chưa nhập	"" / ""	Báo lỗi nhập đủ thông tin		
+TC_LOGIN_07	Chống SQL Injection	UI	H	Nhập chuỗi injection vào username	' OR '1'='1 / bất kỳ	Đăng nhập thất bại, không lộ lỗi hệ thống		
+TC_LOGIN_08	Nhiều tài khoản (Data-Driven)	UI	M	Dùng @DataProvider lặp qua nhiều cặp tài khoản	Bảng hợp lệ / không hợp lệ	Hợp lệ vào được, không hợp lệ bị từ chối		
+3. CRUD Sản phẩm (PRODUCT)
+ID	Tên test case	Loại	Ưu tiên	Các bước	Dữ liệu test	Kết quả mong đợi	Kết quả thực tế	Trạng thái
+TC_PRD_01	Hiển thị danh sách sản phẩm	UI	H	Mở trang danh sách	Có sẵn dữ liệu	Bảng hiển thị đúng các sản phẩm		
+TC_PRD_02	Thêm sản phẩm thành công	UI	H	1. Bấm Thêm mới
+2. Nhập thông tin hợp lệ
+3. Bấm Lưu	Tên: Áo thun / Giá: 150000 / SL: 10	Sản phẩm xuất hiện trong danh sách		
+TC_PRD_03	Tên sản phẩm để trống	UI	H	Bỏ trống tên, bấm Lưu	Tên: ""	Báo lỗi bắt buộc, không tạo bản ghi		
+TC_PRD_04	Tên sản phẩm bị trùng	UT	H	Thêm sản phẩm có tên đã tồn tại	Tên đã có	Bị từ chối, báo "Tên đã tồn tại"		
+TC_PRD_05	Giá bán = 0 (biên)	UT	H	Nhập giá bằng 0	Giá: 0	Bị từ chối vì giá phải > 0		
+TC_PRD_06	Giá bán nhỏ nhất hợp lệ	UT	M	Nhập giá nhỏ nhất lớn hơn 0	Giá: 1	Hợp lệ		
+TC_PRD_07	Giá bán âm	UT	H	Nhập giá âm	Giá: -1	Bị từ chối		
+TC_PRD_08	Số lượng = 0 (biên)	UT	M	Nhập số lượng bằng 0	SL: 0	Hợp lệ		
+TC_PRD_09	Số lượng âm	UT	H	Nhập số lượng âm	SL: -1	Bị từ chối vì SL phải >= 0		
+TC_PRD_10	Giá và số lượng không phải số	UI	M	Nhập chữ vào ô giá, số lượng	Giá: abc / SL: xyz	Báo lỗi định dạng số		
+TC_PRD_11	Sửa sản phẩm thành công	UI	H	1. Bấm Sửa
+2. Đổi thông tin
+3. Bấm Lưu	Giá mới hợp lệ	Danh sách và DB được cập nhật		
+TC_PRD_12	Sửa sản phẩm không tồn tại	UT	M	Gọi cập nhật với ID không có	ID: 999999	assertThrows bắt được ngoại lệ "không tìm thấy"		
+TC_PRD_13	Xóa có xác nhận	UI	H	1. Bấm Xóa
+2. Chọn Đồng ý	Một sản phẩm bất kỳ	Sản phẩm bị xóa khỏi danh sách và DB		
+TC_PRD_14	Hủy xóa	UI	M	1. Bấm Xóa
+2. Chọn Hủy	Một sản phẩm bất kỳ	Sản phẩm vẫn còn nguyên		
+TC_PRD_15	Truy cập khi chưa đăng nhập	UI	H	Mở trực tiếp URL trang quản lý	URL trang quản lý	Bị chuyển về trang đăng nhập		
+4. Tổng hợp
+Chức năng	Số test case	Ưu tiên cao (H)
+Đăng ký	16	9
+Đăng nhập	8	6
+CRUD Sản phẩm	15	9
+Tổng	39	24
