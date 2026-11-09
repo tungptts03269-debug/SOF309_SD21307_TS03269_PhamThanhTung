@@ -1,12 +1,3 @@
-# BỘ TEST CASE – SOF309
-
-- Sinh viên: Phạm Thanh Tùng – TS03269 – Lớp SD21307
-- URL kiểm thử: `http://localhost:8080`
-- Loại test: **UT** = Unit Test (JUnit 5), **UI** = Selenium (TestNG)
-- Độ ưu tiên: **H** = Cao, **M** = Trung bình, **L** = Thấp
-- Nhóm: `smoke` = chạy trong smoke test
-
-> Ghi chú: Dữ liệu và thông báo lỗi bên dưới là mẫu. Hãy sửa lại cho khớp với web thực tế của bạn trước khi nộp.
 
 ---
 
