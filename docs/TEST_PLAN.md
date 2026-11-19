@@ -1,70 +1,59 @@
+# KẾ HOẠCH KIỂM THỬ (TEST PLAN)
 
+## 1. Giới thiệu
+- **Dự án:** Web quản lý sản phẩm (Spring Boot + Thymeleaf + MySQL)
+- **Môn học:** SOF309 – Kiểm thử nâng cao cùng AI
+- **Tài liệu tham chiếu:** `docs/SPECIFICATIONS.md`
 
-## 1. MỤC TIÊU KIỂM THỬ
+## 2. Mục tiêu
+- Kiểm chứng các chức năng Đăng ký, Đăng nhập, Quản lý sản phẩm đúng đặc tả.
+- Phát hiện lỗi validation tại các giá trị biên.
+- Xây dựng bộ kiểm thử tự động tái sử dụng được (JUnit 5, Selenium POM, TestNG, CI/CD).
 
-- Kiểm thử logic backend (Unit Test với JUnit 5 cho Controller), gồm kiểm tra giá trị biên bằng `@ParameterizedTest` + `@CsvSource` và kiểm tra ngoại lệ nghiệp vụ bằng `assertThrows()`.
-- Kiểm thử giao diện tự động (Automation UI Test với Selenium WebDriver), áp dụng Page Object Model, `WebDriverWait`, TestNG Groups, `@DataProvider` và tự chụp ảnh màn hình khi test fail.
-- Tích hợp kiểm thử tự động với GitHub Actions CI/CD, chạy Chrome Headless và lưu báo cáo, ảnh lỗi lên Artifacts.
+## 3. Phạm vi
+| Trong phạm vi | Ngoài phạm vi |
+|---------------|---------------|
+| Validation form Đăng ký, Đăng nhập, Sản phẩm | Kiểm thử hiệu năng tải lớn |
+| Luồng CRUD sản phẩm | Kiểm thử bảo mật chuyên sâu |
+| Chuyển hướng khi chưa đăng nhập | Tương thích đa trình duyệt (chỉ Chrome) |
 
-## 2. PHẠM VI KIỂM THỬ
+## 4. Kỹ thuật thiết kế Test Case
+1. **Phân vùng tương đương (Equivalence Partitioning):** chia dữ liệu thành lớp hợp lệ và không hợp lệ, mỗi lớp chọn một đại diện.
+2. **Phân tích giá trị biên (Boundary Value Analysis):** chọn giá trị tại và quanh biên: min−1, min, min+1, max−1, max, max+1.
+3. **Kiểm thử ngoại lệ:** trùng dữ liệu, id không tồn tại, giá âm.
 
-**In-Scope (trong phạm vi):**
+### Bảng biên tổng hợp
+| Trường | Hợp lệ | Biên cần test |
+|--------|--------|---------------|
+| username (5–20) | 5–20 ký tự | 4, 5, 6, 19, 20, 21 |
+| password (8–30) | 8–30 ký tự | 7, 8, 9, 29, 30, 31 |
+| name (3–100) | 3–100 ký tự | 2, 3, 4, 99, 100, 101 |
+| price (>0, ≤1 tỷ) | 0 < giá ≤ 1.000.000.000 | -1, 0, 0.01, 1.000.000.000, 1.000.000.001 |
+| quantity (0–10000) | 0–10000 | -1, 0, 1, 9999, 10000, 10001 |
 
-- Luồng **Đăng ký**: kiểm tra `username` (5-20 ký tự), `email`, `password` (tối thiểu 8 ký tự, có ký tự đặc biệt), `confirmPassword`.
-- Luồng **Đăng nhập**: đúng tài khoản chuyển về trang chủ, sai tài khoản báo lỗi.
-- Thao tác **CRUD Sản phẩm** trên giao diện: thêm mới, xem danh sách, sửa, xóa (có xác nhận); kiểm tra tên sản phẩm, giá bán, số lượng.
+## 5. Các mức kiểm thử và công cụ
+| Mức | Công cụ | Nội dung | Tuần |
+|-----|---------|----------|------|
+| Unit Test Controller | JUnit 5, Mockito/MockMvc | Validation, ngoại lệ, timeout | 2 |
+| UI Automation | Selenium WebDriver + POM | Luồng đăng nhập, CRUD | 3 |
+| Data-Driven / Nhóm | TestNG (`@DataProvider`, groups) | Nhiều bộ tài khoản, nhóm smoke | 4 |
+| CI/CD | GitHub Actions | Chạy tự động, upload báo cáo | 5 |
 
-**Out-of-Scope (ngoài phạm vi):**
+## 6. Môi trường kiểm thử
+- JDK 17, Maven, Chrome (bản mới), MySQL local
+- Hệ điều hành: Windows (local), Ubuntu (GitHub Actions)
 
-- Kiểm thử hiệu năng (Performance Test).
-- Kiểm thử bảo mật chuyên sâu (chỉ kiểm tra cơ bản như chuỗi SQL Injection ở form đăng nhập).
+## 7. Tiêu chí
+- **Bắt đầu:** web chạy ổn định ở local, đã có đặc tả và Test Case.
+- **Hoàn thành:** `mvn test` đạt 100% pass; pipeline GitHub Actions màu xanh.
+- **Mức ưu tiên:** High (đăng nhập, đăng ký, thêm sản phẩm) → Medium (sửa, xóa) → Low (giao diện).
 
-## 3. TIÊU CHÍ HOÀN THÀNH
+## 8. Rủi ro
+| Rủi ro | Giảm thiểu |
+|--------|------------|
+| Locator thay đổi khi sửa giao diện | Dùng POM, ưu tiên `id`/`name` |
+| Test không ổn định do chờ trang | Dùng `WebDriverWait`, không dùng `Thread.sleep()` |
+| Dữ liệu test dính nhau | Dùng dữ liệu riêng cho mỗi test, dọn sau khi chạy |
 
-- 100% test script thực thi pass.
-- Pipeline GitHub Actions báo xanh (Success).
-
----
-
-## 4. CHIẾN LƯỢC VÀ CÔNG CỤ
-
-| Cấp độ kiểm thử | Công cụ | Nội dung |
-|---|---|---|
-| Unit Test | JUnit 5, Maven | Kiểm thử Controller: dữ liệu biên, ngoại lệ nghiệp vụ |
-| UI Test | Selenium WebDriver 4, TestNG | Kiểm thử luồng người dùng trên Chrome, Page Object Model |
-| CI/CD | GitHub Actions | Tự chạy test khi push code, Chrome Headless trên Ubuntu |
-| Hỗ trợ AI | Claude | Sinh test case, sinh code test, phân tích lỗi, code review |
-
-## 5. MÔI TRƯỜNG KIỂM THỬ
-
-- Ngôn ngữ và nền tảng: Java 17, Spring Boot, MySQL hoặc H2.
-- Công cụ build: Maven.
-- Trình duyệt: Google Chrome (bản mới nhất).
-- Địa chỉ chạy ứng dụng: `http://localhost:8080`.
-- Môi trường CI: Ubuntu (GitHub Actions).
-
-## 6. LỊCH TRÌNH THỰC HIỆN
-
-| Tuần | Công việc | Sản phẩm |
-|---|---|---|
-| Tuần 1 | Đưa web vào repo, viết đặc tả, Test Plan, Test Case | `SPECIFICATIONS.md`, `TEST_PLAN.md`, `TEST_CASES.md` |
-| Tuần 2 | Viết Unit Test Controller | `src/test/java/.../controllers/` |
-| Tuần 3 | Xây dựng Selenium Page Object Model | `src/test/java/.../ui/pages/` |
-| Tuần 4 | Nâng cấp TestNG: Groups, DataProvider, chụp ảnh khi fail | `testng.xml`, `screenshots/` |
-| Tuần 5 | Cấu hình GitHub Actions, phân tích lỗi với AI | `.github/workflows/test.yml` |
-| Tuần 6 | Code review, rà soát nhật ký AI, chuẩn bị bảo vệ | `docs/ai-logs/`, slide |
-
-## 7. SẢN PHẨM BÀN GIAO
-
-- Tài liệu: `SPECIFICATIONS.md`, `TEST_PLAN.md`, `TEST_CASES.md`.
-- Mã kiểm thử: Unit Test (JUnit 5) và UI Test (Selenium + TestNG).
-- Cấu hình CI/CD: `.github/workflows/test.yml`.
-- Minh chứng sử dụng AI: các file trong `docs/ai-logs/`.
-
-## 8. RỦI RO VÀ BIỆN PHÁP
-
-| Rủi ro | Biện pháp |
-|---|---|
-| Selenium test không ổn định do trang tải chậm | Dùng `WebDriverWait` thay cho `Thread.sleep` |
-| Dữ liệu test bị trùng giữa các lần chạy | Dùng dữ liệu ngẫu nhiên hoặc dọn dữ liệu trước và sau khi test |
-| Test chạy local pass nhưng fail trên CI | Chạy Chrome Headless và cấu hình kích thước cửa sổ cố định |
+## 9. Sản phẩm bàn giao
+`TEST_PLAN.md`, `TEST_CASES.md`, mã test, `testng.xml`, ảnh chụp lỗi, báo cáo CI, nhật ký AI.
